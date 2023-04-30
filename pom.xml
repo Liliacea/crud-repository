@@ -13,6 +13,9 @@
     <artifactId>maven-parent</artifactId>
     <version>2.3.0</version>
   </parent>
+  <properties>
+    <hibernate-version>5.0.1.Final</hibernate-version>
+  </properties>
 
   <dependencies>
     <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
@@ -34,6 +37,20 @@
       <artifactId>junit</artifactId>
       <version>RELEASE</version>
       <scope>test</scope>
+    </dependency>
+    <!-- Hibernate -->
+    <!-- to start need only this -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <version>${hibernate-version}</version>
+    </dependency>
+
+    <!-- for JPA, use hibernate-entitymanager instead of hibernate-core -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <version>${hibernate-version}</version>
     </dependency>
 
 

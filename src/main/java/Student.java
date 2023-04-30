@@ -1,17 +1,18 @@
+import java.sql.Date;
 import java.time.LocalDate;
 
 public class Student {
     private int id;
     private String surname;
     private String name;
-    private String group;
-    private LocalDate dateOfBirth;
 
-    public Student(int id, String surname, String name, String group, LocalDate dateOfBirth) {
+    private int dateOfBirth;
+
+    public Student(int id, String surname, String name, int dateOfBirth) {
         this.id = id;
         this.surname = surname;
         this.name = name;
-        this.group = group;
+
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -31,19 +32,13 @@ public class Student {
         this.name = name;
     }
 
-    public String getGroup() {
-        return group;
-    }
 
-    public void setGroup(String group) {
-        this.group = group;
-    }
 
-    public LocalDate getDateOfBirth() {
+    public int getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
+    public void setDateOfBirth(int dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 }

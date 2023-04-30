@@ -1,36 +1,35 @@
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import java.io.IOException;
+import java.sql.*;
 import java.util.ArrayList;
 
-public class CRUDsomebody implements CRUDrepository{
+public class CRUDsomebody implements CRUDrepository<Student, Integer>{
     static Connection connection;
 
     static String sql;
+    Statement statement;
 
     @Override
-    public Object add (Object o) {
-        try (Statement statement = connection.createStatement();){
+    public Student add (Student student) {
+        try {
 
+            statement = DBConfig.getConnection().createStatement();
 
+            sql = "INSERT INTO people.newtable1 (surname, name, dateOfBirth) VALUES (?,?,?)";
+            PreparedStatement preparedStatement = DBConfig.getConnection().prepareStatement(sql);
 
-            sql = "INSERT INTO people.newtable (surname, name, group, dateOfBirth) VALUES (?,?,?,?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-
-            preparedStatement.setString(1, o.getSurname());
-            preparedStatement.setInt(2, person.getAge());
-            preparedStatement.setString(3, person.getAdress());
-            preparedStatement.setDouble(4, person.getSalary());
+            preparedStatement.setString(1, student.getSurname());
+            preparedStatement.setString(2, student.getName());
+           ;
+            preparedStatement.setInt(3, student.getDateOfBirth());
 
             preparedStatement.executeUpdate();
 
-
+            statement.close();
 
 
         } catch (Exception e) {
 
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            e.printStackTrace();
 
 
         }
@@ -39,25 +38,25 @@ public class CRUDsomebody implements CRUDrepository{
 
        return student;
     }
-    }
+
 
     @Override
-    public Object findById(Object id) {
+    public Student findById(Integer id) {
         return null;
     }
 
     @Override
-    public Object update(Object o) {
+    public Student update(Student student) {
         return null;
     }
 
     @Override
-    public Object delete(Object o) {
+    public Student delete(Student student) {
         return null;
     }
 
     @Override
     public void close() throws Exception {
-
+        throw new SQLException();
     }
 }
