@@ -6,14 +6,18 @@ public class Student {
     private String surname;
     private String name;
 
-    private int dateOfBirth;
+    private LocalDate dateOfBirth;
 
-    public Student(int id, String surname, String name, int dateOfBirth) {
+    public Student(int id, String surname, String name, LocalDate dateOfBirth) {
         this.id = id;
         this.surname = surname;
         this.name = name;
 
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getSurname() {
@@ -34,11 +38,11 @@ public class Student {
 
 
 
-    public int getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(int dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 }
