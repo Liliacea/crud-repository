@@ -1,21 +1,71 @@
+import org.flywaydb.core.Flyway;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class CRUDsomebody implements CRUDrepository<Student, Integer>{
 
     static String sql;
     Statement statement;
+    static Connection connection;
+
+    public CRUDsomebody(Connection connection) {
+        this.connection = connection;
+    }
+
+    public static Connection getConnection() {
+        try {
+            Class.forName("org.postgresql.Driver");
+            Properties prop = new Properties();
+            InputStream input = CRUDsomebody.class.getClassLoader().getResourceAsStream("app.properties");
+            prop.load(input);
+            connection = DriverManager.getConnection
+                    (prop.getProperty("db.url"), prop.getProperty("db.user"),
+                            prop.getProperty("db.password"));
+            connection = ConnectionRollBack.create(connection);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("connection doesn't exist");
+        }
+        return connection;
+    }
+
+    public boolean migrate() {
+        boolean isMigrated = false;
+        try (
+                InputStream input = CRUDsomebody.class.getClassLoader().getResourceAsStream("app.properties")) {
+
+
+            Properties prop = new Properties();
+            prop.load(input);
+            Flyway flyway = new Flyway();
+            flyway.setDataSource(prop.getProperty("db.url"), prop.getProperty("db.user"), prop.getProperty("db.password"));
+            flyway.migrate();
+            isMigrated = true;
+        } catch (Exception e) {
+            isMigrated = false;
+            e.printStackTrace();
+            System.out.println("Connection Failed");
+
+
+        }
+
+        return  isMigrated;
+    }
 
     @Override
     public Student add (Student student) {
         try {
 
-            statement = DBConfig.getConnection().createStatement();
+            statement = connection.createStatement();
 
             sql = "INSERT INTO people.newtable1 (surname, name, dateOfBirth) VALUES (?,?,?)";
-            PreparedStatement preparedStatement = DBConfig.getConnection().prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.setString(1, student.getSurname());
             preparedStatement.setString(2, student.getName());
@@ -45,7 +95,7 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer>{
 
         Student student = null;
         try {
-            statement = DBConfig.getConnection().createStatement();
+            statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT * FROM people.newtable1 where id = id;");
             while (rs.next()) {
                 if (rs.getInt("id") == id) {
@@ -81,7 +131,7 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer>{
 
 
             sql = "UPDATE people.newtable1 set surname = 'surname' where ID= ?;";
-            PreparedStatement preparedStatement = DBConfig.getConnection().prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, student.getId());
 
             preparedStatement.executeUpdate();
@@ -103,7 +153,7 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer>{
 
 
             sql = "DELETE from people.newtable1 where ID=?;";
-            PreparedStatement preparedStatement = DBConfig.getConnection().prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, student.getId());
             preparedStatement.executeUpdate();
 
