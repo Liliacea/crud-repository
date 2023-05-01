@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class CRUDsomebody implements CRUDrepository<Student, Integer>{
-    static Connection connection;
 
     static String sql;
     Statement statement;
@@ -35,7 +34,7 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer>{
 
         }
 
-        System.out.println("-- Records created successfully");
+
 
        return student;
     }
@@ -65,12 +64,11 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer>{
 
 
         } catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            e.printStackTrace();
 
         }
 
-        System.out.println("-- Operation SELECT done successfully");
+
 
         return student;
 
@@ -78,12 +76,47 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer>{
 
     @Override
     public Student update(Student student) {
-        return null;
+
+        try {
+
+
+            sql = "UPDATE people.newtable1 set surname = 'surname' where ID= ?;";
+            PreparedStatement preparedStatement = DBConfig.getConnection().prepareStatement(sql);
+            preparedStatement.setInt(1, student.getId());
+
+            preparedStatement.executeUpdate();
+
+
+            preparedStatement.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return student;
     }
 
     @Override
     public Student delete(Student student) {
-        return null;
+
+        try {
+
+
+            sql = "DELETE from people.newtable1 where ID=?;";
+            PreparedStatement preparedStatement = DBConfig.getConnection().prepareStatement(sql);
+            preparedStatement.setInt(1, student.getId());
+            preparedStatement.executeUpdate();
+
+
+            preparedStatement.close();
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        return student;
     }
 
     @Override
