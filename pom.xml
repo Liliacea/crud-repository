@@ -8,6 +8,7 @@
   <artifactId>crud-repository</artifactId>
   <version>1.0-SNAPSHOT</version>
 
+
   <parent>
     <groupId>at.stderr</groupId>
     <artifactId>maven-parent</artifactId>
@@ -38,26 +39,14 @@
       <version>RELEASE</version>
       <scope>test</scope>
     </dependency>
-    <!-- Hibernate -->
-    <!-- to start need only this -->
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <version>${hibernate-version}</version>
-    </dependency>
 
-    <!-- for JPA, use hibernate-entitymanager instead of hibernate-core -->
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-      <version>${hibernate-version}</version>
-    </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-maven-plugin -->
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
       <version>5.0.3</version>
+      <scope>org.flywaydb:flyway-core</scope>
     </dependency>
 
   </dependencies>
@@ -66,7 +55,52 @@
     <plugins>
 
 
+
+
       <plugin>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-maven-plugin</artifactId>
+        <version>9.8.1</version>
+
+
+        <executions>
+
+          <execution>
+            <id>migration</id>
+
+            <goals>
+              <goal>migrate</goal>
+            </goals>
+
+            <configuration>
+              <locations>
+                <location>org.flywaydb:flyway-core</location>
+
+              </locations>
+
+              <encoding>UTF-8</encoding>
+
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+
+          <url>jdbc:postgresql://localhost:5434/postgres</url>
+          <user>postgres</user>
+          <password>mypass</password>
+        </configuration>
+
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.0.1</version>
+
+      </plugin>
+
+
+      <plugin>
+
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.1.0</version>
@@ -74,10 +108,14 @@
           <execution>
             <goals>
               <goal>java</goal>
+
+
             </goals>
           </execution>
         </executions>
         <configuration>
+          <addOutputToClasspath>true</addOutputToClasspath>
+          <classpathScope>org.flywaydb:flyway-core</classpathScope>
           <mainClass>org.example.crud-repository.Main</mainClass>
         </configuration>
       </plugin>

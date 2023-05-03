@@ -35,7 +35,7 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer>{
         return connection;
     }
 
-    public boolean migrate() {
+  /*  public boolean migrate() {
         boolean isMigrated = false;
         try (
                 InputStream input = CRUDsomebody.class.getClassLoader().getResourceAsStream("app.properties")) {
@@ -58,13 +58,39 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer>{
         return  isMigrated;
     }
 
+   */
+
+
+    public Integer selectId(Student student){
+        Integer selectId = null;
+
+        try {
+            statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("select id from people.newtable1 where name = 'ivan';");
+            while (rs.next()) {
+                int id = rs.getInt("id");
+
+
+                selectId = id;
+
+                System.out.println(String.format("ID=%s", id));
+            }
+
+            rs.close();
+            statement.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return selectId;
+    }
     @Override
     public Student add (Student student) {
         try {
 
             statement = connection.createStatement();
 
-            sql = "INSERT INTO people.newtable1 (surname, name, dateOfBirth) VALUES (?,?,?)";
+            sql = "INSERT INTO people.newtable1 (surname, name, dateOfBirth) VALUES (?,?,?) ";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.setString(1, student.getSurname());
@@ -74,7 +100,10 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer>{
 
             preparedStatement.executeUpdate();
 
+
             statement.close();
+
+
 
 
         } catch (Exception e) {
@@ -130,9 +159,9 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer>{
         try {
 
 
-            sql = "UPDATE people.newtable1 set surname = 'surname' where ID= ?;";
+            sql = "UPDATE people.newtable1 set surname = 'surname' where name= ?;";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, student.getId());
+            preparedStatement.setString(1, student.getName());
 
             preparedStatement.executeUpdate();
 
