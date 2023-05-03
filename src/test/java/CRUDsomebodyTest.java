@@ -1,55 +1,49 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-
 import java.sql.Connection;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
-
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
+/**
+ * test CRUD
+ * connectionn rollback
+ */
 
 class CRUDsomebodyTest {
     CRUDsomebody cruDsomebody;
-
-
-
     @BeforeEach
     void setUp() {
         Connection connection = CRUDsomebody.getConnection();
         cruDsomebody = new CRUDsomebody(connection);
-
-
     }
 
-
+    /**
+     * test rollBack connection
+     */
     @Test
     void getConnection() {
         assertNotNull(cruDsomebody.connection);
     }
 
-
-
+    /**
+     * test the field name of the added entity corresponds to the field name of the object
+     */
     @Test
     void add() {
         Student ivanov = new Student(1, "ivanov", "ivan", LocalDate.of(2015,02,02));
         Student petrov = new Student(2,"petrov", "petr", LocalDate.of(2012,02,03));
         long m = System.currentTimeMillis();
-
         assertThat(cruDsomebody.add(ivanov).getName(), is("ivan"));
-
-
         System.out.println(System.currentTimeMillis() - m);
     }
 
-
+    /**
+     * test findById returns entity which field name corresponds to the field name of the added object
+     */
     @Test
     void findById() {
         int id;
@@ -59,12 +53,14 @@ class CRUDsomebodyTest {
         cruDsomebody.add(ivanov);
         cruDsomebody.add(petrov);
         id = cruDsomebody.selectId(ivanov);
-
         assertThat(cruDsomebody.findById(id).getName(),is("ivan"));
-
     }
 
-  /*  @Test
+    /**
+     * test update returns entity which field was changed
+     */
+
+    @Test
     void update() {
         Student ivanov = new Student(1, "ivanov", "ivan", LocalDate.of(2015,02,02));
         Student petrov = new Student(2,"petrov", "petr", LocalDate.of(2012,02,03));
@@ -72,20 +68,31 @@ class CRUDsomebodyTest {
         cruDsomebody.add(ivanov);
         cruDsomebody.add(petrov);
         cruDsomebody.update(ivanov);
-        assertThat(cruDsomebody.update(ivanov).getSurname(), is("surname"));
+        int id = cruDsomebody.selectId(ivanov);
+        assertThat(cruDsomebody.findById(id).getSurname(), is("surname"));
     }
 
-
-
+    /**
+     * test deleted entity is null
+     */
     @Test
     void delete() {
+        ArrayList<Student> students = new ArrayList<>();
+        Student ivanov = new Student(1, "ivanov", "ivan", LocalDate.of(2015,02,02));
+        Student petrov = new Student(2,"petrov", "petr", LocalDate.of(2012,02,03));
+        long m = System.currentTimeMillis();
+        cruDsomebody.add(ivanov);
+        cruDsomebody.add(petrov);
+        cruDsomebody.delete(ivanov);
+
+        assertNull(cruDsomebody.selectId(ivanov));
     }
 
     @Test
     void close() {
     }
 
-   */
+
 
 
 }
