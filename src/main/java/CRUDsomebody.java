@@ -9,62 +9,38 @@ import java.util.Properties;
 
 public class CRUDsomebody implements CRUDrepository<Student, Integer> {
 
-    static String sql;
-    Statement statement;
-    static Connection connection;
+
+   private Connection connection;
+
+    public int added;
+
+
 
     public CRUDsomebody(Connection connection) {
         this.connection = connection;
-    }
+        this.added = added;
 
-    public static Connection getConnection() {
-        try {
-            Class.forName("org.postgresql.Driver");
-            Properties prop = new Properties();
-            InputStream input = CRUDsomebody.class.getClassLoader().getResourceAsStream("app.properties");
-            prop.load(input);
-            connection = DriverManager.getConnection
-                    (prop.getProperty("db.url"), prop.getProperty("db.user"),
-                            prop.getProperty("db.password"));
-            connection = ConnectionRollBack.create(connection);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("connection doesn't exist");
-        }
-        return connection;
-    }
-
-    public Integer selectId(Student student) {
-        Integer selectId = null;
-        try {
-            statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("select id from people.newtable1 where name = 'ivan';");
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                selectId = id;
-                System.out.println(String.format("ID=%s", id));
-            }
-            rs.close();
-            statement.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return selectId;
     }
 
     @Override
     public Student add(Student student) {
-        try {
-            statement = connection.createStatement();
-            sql = "INSERT INTO people.newtable1 (surname, name, dateOfBirth) VALUES (?,?,?) ";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        try (Statement statement = connection.createStatement()) {
+            String[] returnId = {"id"};
+            String sql = "INSERT INTO people.newtable1 (surname, name, dateOfBirth) VALUES (?,?,?) ";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, returnId);
             preparedStatement.setString(1, student.getSurname());
             preparedStatement.setString(2, student.getName());
-
             preparedStatement.setDate(3, Date.valueOf(student.getDateOfBirth()));
-            preparedStatement.executeUpdate();
-            statement.close();
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Creating user failed, no rows affected.");
+            }
+            try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
+                if (rs.next()) {
+                    added = rs.getInt(1);
+                    System.out.println(added);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,9 +50,8 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer> {
     @Override
     public Student findById(Integer id) {
         Student student = null;
-        try {
-            statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT * FROM people.newtable1 where id = id;");
+        try (Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery("SELECT * FROM people.newtable1 where id = id;")) {
             while (rs.next()) {
                 if (rs.getInt("id") == id) {
                     id = rs.getInt("id");
@@ -87,8 +62,6 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer> {
                     System.out.println(String.format("ID=%s SURNAME=%s NAME=%s DATEOFBIRTH=%s", id, surname, name, dateOfBirth));
                 }
             }
-            rs.close();
-            statement.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -97,12 +70,11 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer> {
 
     @Override
     public Student update(Student student) {
-        try {
-            sql = "UPDATE people.newtable1 set surname = 'surname' where name= ?;";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "UPDATE people.newtable1 set surname = 'surname' where name = ?;");
+        ) {
             preparedStatement.setString(1, student.getName());
             preparedStatement.executeUpdate();
-            preparedStatement.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,12 +83,10 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer> {
 
     @Override
     public Student delete(Student student) {
-        try {
-            sql = "DELETE from people.newtable1 where name=?;";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        try (PreparedStatement preparedStatement = connection.prepareStatement
+                ("DELETE from people.newtable1 where name =?;");) {
             preparedStatement.setString(1, student.getName());
             preparedStatement.executeUpdate();
-            preparedStatement.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,7 +94,7 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer> {
     }
 
     @Override
-    public void close() throws Exception {
-        throw new SQLException();
+    public void close() throws SQLException {
+        connection.close();
     }
 }
