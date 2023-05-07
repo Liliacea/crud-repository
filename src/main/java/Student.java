@@ -2,16 +2,31 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 public class Student {
-    private int id;
-    private String surname;
-    private String name;
-    private LocalDate dateOfBirth;
     public Student(int id, String surname, String name, LocalDate dateOfBirth) {
-        this.id = id;
+
+            this.id = id;
+            this.surname = surname;
+            this.name = name;
+            this.dateOfBirth = dateOfBirth;
+
+    }
+
+
+    public Student(String surname, String name, LocalDate dateOfBirth) {
         this.surname = surname;
         this.name = name;
         this.dateOfBirth = dateOfBirth;
     }
+
+
+    private int id;
+    private String surname;
+    private String name;
+    private LocalDate dateOfBirth;
+
+
+
+
     public int getId() {
         return id;
     }

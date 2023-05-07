@@ -12,18 +12,20 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer> {
 
    private Connection connection;
 
-    public int added;
+
 
 
 
     public CRUDsomebody(Connection connection) {
         this.connection = connection;
-        this.added = added;
+
 
     }
 
     @Override
     public Student add(Student student) {
+
+
         try (Statement statement = connection.createStatement()) {
             String[] returnId = {"id"};
             String sql = "INSERT INTO people.newtable1 (surname, name, dateOfBirth) VALUES (?,?,?) ";
@@ -31,25 +33,29 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer> {
             preparedStatement.setString(1, student.getSurname());
             preparedStatement.setString(2, student.getName());
             preparedStatement.setDate(3, Date.valueOf(student.getDateOfBirth()));
+
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows == 0) {
                 throw new SQLException("Creating user failed, no rows affected.");
             }
             try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
                 if (rs.next()) {
-                    added = rs.getInt(1);
-                    System.out.println(added);
+
+                    System.out.println(rs.getInt(1));
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
+
         }
+
         return student;
     }
 
     @Override
     public Student findById(Integer id) {
         Student student = null;
+
         try (Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery("SELECT * FROM people.newtable1 where id = id;")) {
             while (rs.next()) {
@@ -60,11 +66,13 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer> {
                     LocalDate dateOfBirth = rs.getDate("dateOfBirth").toLocalDate();
                     student = new Student(id, surname, name, dateOfBirth);
                     System.out.println(String.format("ID=%s SURNAME=%s NAME=%s DATEOFBIRTH=%s", id, surname, name, dateOfBirth));
+
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return student;
     }
 
