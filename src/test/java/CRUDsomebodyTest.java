@@ -62,11 +62,11 @@ class CRUDsomebodyTest {
         Student ivanov = new Student(1, "ivanov", "ivan", LocalDate.of(2015, 02, 02));
         Student petrov = new Student(2, "petrov", "petr", LocalDate.of(2012, 02, 03));
         long m = System.currentTimeMillis();
-        cruDsomebody.add(ivanov);
-        Student addedIvanov = cruDsomebody.add(ivanov);
-        System.out.println(System.currentTimeMillis() - m);
-        assertThat(cruDsomebody.findById(addedIvanov.getId()).getName(), is("ivan"));
+        int id = cruDsomebody.add(ivanov).getId();
 
+
+        assertThat(cruDsomebody.findById(id).getName(), is("ivan"));
+        System.out.println(System.currentTimeMillis() - m);
 
     }
 
@@ -79,9 +79,9 @@ class CRUDsomebodyTest {
         Student ivanov = new Student(1, "ivanov", "ivan", LocalDate.of(2015, 02, 02));
         Student petrov = new Student(2, "petrov", "petr", LocalDate.of(2012, 02, 03));
         long m = System.currentTimeMillis();
-        cruDsomebody.add(ivanov);
+        int id = cruDsomebody.add(ivanov).getId();
         cruDsomebody.update(ivanov);
-       // assertThat(cruDsomebody.findById(cruDsomebody.added).getSurname(), is("surname"));
+        assertThat(cruDsomebody.findById(id).getSurname(), is("surname"));
         System.out.println(System.currentTimeMillis() - m);
     }
 
@@ -92,11 +92,11 @@ class CRUDsomebodyTest {
     void delete() {
         ArrayList<Student> students = new ArrayList<>();
         Student ivanov = new Student(1, "ivanov", "ivan", LocalDate.of(2015, 02, 02));
-        Student petrov = new Student(2, "petrov", "petr", LocalDate.of(2012, 02, 03));
+       Student petrov = new Student("petrov","petr", LocalDate.of(2020,12,15));
         long m = System.currentTimeMillis();
-        cruDsomebody.add(ivanov);
+        int id = cruDsomebody.add(ivanov).getId();
         cruDsomebody.delete(ivanov);
-       // assertNull(cruDsomebody.findById(cruDsomebody.added));
+        assertNull(cruDsomebody.findById(id));
         System.out.println(System.currentTimeMillis() - m);
     }
 

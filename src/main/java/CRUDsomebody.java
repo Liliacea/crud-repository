@@ -9,11 +9,8 @@ import java.util.Properties;
 
 public class CRUDsomebody implements CRUDrepository<Student, Integer> {
 
-
-   private Connection connection;
-
-
-
+    Integer id;
+    private Connection connection;
 
 
     public CRUDsomebody(Connection connection) {
@@ -40,16 +37,17 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer> {
             }
             try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
                 if (rs.next()) {
-
-                    System.out.println(rs.getInt(1));
+                    id = rs.getInt(1);
+                    System.out.println(id);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
 
         }
-
-        return student;
+        Student rsl = student;
+        rsl.setId(id);
+        return rsl;
     }
 
     @Override
@@ -78,14 +76,18 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer> {
 
     @Override
     public Student update(Student student) {
+
         try (PreparedStatement preparedStatement = connection.prepareStatement(
                 "UPDATE people.newtable1 set surname = 'surname' where name = ?;");
+
         ) {
             preparedStatement.setString(1, student.getName());
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
         return student;
     }
 
