@@ -62,7 +62,11 @@ public class CRUDsomebody implements CRUDrepository<Student, Integer> {
                     String surname = rs.getString("surname");
                     String name = rs.getString("name");
                     LocalDate dateOfBirth = rs.getDate("dateOfBirth").toLocalDate();
-                    student = new Student(id, surname, name, dateOfBirth);
+                    student = new Student.Builder()
+                            .surname(surname)
+                            .name(name)
+                            .dateOfBirth(dateOfBirth)
+                            .build();
                     System.out.println(String.format("ID=%s SURNAME=%s NAME=%s DATEOFBIRTH=%s", id, surname, name, dateOfBirth));
 
                 }

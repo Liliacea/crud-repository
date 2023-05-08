@@ -44,8 +44,12 @@ class CRUDsomebodyTest {
      */
     @Test
     void add() {
-        Student ivanov = new Student(1, "ivanov", "ivan", LocalDate.of(2015, 02, 02));
-        Student petrov = new Student(2, "petrov", "petr", LocalDate.of(2012, 02, 03));
+        Student ivanov = new Student.Builder()
+                .surname("ivanov")
+                .name("ivan")
+                .dateOfBirth(LocalDate.of(2000,12,20))
+                .build();
+
         long m = System.currentTimeMillis();
         Student addedIvanov = cruDsomebody.add(ivanov);
         assertThat(cruDsomebody.add(ivanov).getName(), is("ivan"));
@@ -59,8 +63,12 @@ class CRUDsomebodyTest {
     @Test
     void findById() {
 
-        Student ivanov = new Student(1, "ivanov", "ivan", LocalDate.of(2015, 02, 02));
-        Student petrov = new Student(2, "petrov", "petr", LocalDate.of(2012, 02, 03));
+        CRUDsomebody cruDsomebody = new CRUDsomebody(DBConfig.getConnection());
+        Student ivanov = new Student.Builder()
+                .surname("ivanov")
+                .name("ivan")
+                .dateOfBirth(LocalDate.of(2000,12,20))
+                .build();
         long m = System.currentTimeMillis();
         int id = cruDsomebody.add(ivanov).getId();
 
@@ -76,8 +84,12 @@ class CRUDsomebodyTest {
 
     @Test
     void update() {
-        Student ivanov = new Student(1, "ivanov", "ivan", LocalDate.of(2015, 02, 02));
-        Student petrov = new Student(2, "petrov", "petr", LocalDate.of(2012, 02, 03));
+        CRUDsomebody cruDsomebody = new CRUDsomebody(DBConfig.getConnection());
+        Student ivanov = new Student.Builder()
+                .surname("ivanov")
+                .name("ivan")
+                .dateOfBirth(LocalDate.of(2000,12,20))
+                .build();
         long m = System.currentTimeMillis();
         int id = cruDsomebody.add(ivanov).getId();
         cruDsomebody.update(ivanov);
@@ -91,8 +103,12 @@ class CRUDsomebodyTest {
     @Test
     void delete() {
         ArrayList<Student> students = new ArrayList<>();
-        Student ivanov = new Student(1, "ivanov", "ivan", LocalDate.of(2015, 02, 02));
-       Student petrov = new Student("petrov","petr", LocalDate.of(2020,12,15));
+        CRUDsomebody cruDsomebody = new CRUDsomebody(DBConfig.getConnection());
+        Student ivanov = new Student.Builder()
+                .surname("ivanov")
+                .name("ivan")
+                .dateOfBirth(LocalDate.of(2000,12,20))
+                .build();
         long m = System.currentTimeMillis();
         int id = cruDsomebody.add(ivanov).getId();
         cruDsomebody.delete(ivanov);
